@@ -48,7 +48,7 @@ parser.add_argument('-cl', '--checkliquidity',  action="store_true",
 parser.add_argument('-r', '--retry', default=9999999999999999999999999, nargs="?", const=True, type=int,
                     help='with this arg you retry automatically if your tx failed, e.g. "-r 5" or "--retry 5" for max 5 Retrys')
 parser.add_argument('-sec', '--SwapEnabledCheck',  action="store_true",
-                    help='this argument for automatically if owner enable swap/trade!')
+                    help='this argument for automatically swap if owner enable swap/trade')
 args = parser.parse_args()
 
 
@@ -67,7 +67,7 @@ class SniperBot():
     def SayWelcome(self):
         self.TXN = TXN(self.token, self.amountForSnipe)
         print(style().YELLOW + ascii + style().RESET)
-        print(style().GREEN + """Attention, Fee Is Using PES( 0xF6616E97D162D5987fF5c2c2CF88569675963F6c ) Send 0.0003 BSC To Get 1 PES!""" + style().RESET)
+        print(style().GREEN + """Attention, DWYOR !!!""" + style().RESET)
         print(style().GREEN +
               "Start Sniper Tool with following arguments:" + style().RESET)
         print(style().BLUE + "---------------------------------" + style().RESET)

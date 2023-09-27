@@ -1,6 +1,7 @@
 {
     "metamask_address": "Set Your BSC Address",
     "metamask_private_key": "Set Your Bsc PrivateKey" ,
+    "dexcode": "0 for pancakeswap,1 for apeswap",
     "telegram_id": "Chat @Pesv3_bot In Telegram First And Send /start To @getidsbot For Getting Telegram Userid And You Can paste at here",
     "RPC": "https://binance.llamarpc.com",
     "GWEI_GAS": 50,

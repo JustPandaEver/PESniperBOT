@@ -11,7 +11,7 @@ with open("./settings.json") as f:
 class TXN():
     def __init__(self, token_address, quantity):
         self.w3 = self.connect()
-        self.address, self.private_key, self.chat_id= self.setup_address()
+        self.address, self.private_key, self.chat_id, self.dexs = self.setup_address()
         self.token_address = Web3.toChecksumAddress(token_address)
         self.token_contract = self.setup_token()
         self.swapper_address, self.swapper = self.setup_swapper()
@@ -46,7 +46,10 @@ class TXN():
         if len(str(keys["telegram_id"])) > 20:
             print(style.RED + "Set your Telegram UserID in the settings.json file!" + style.RESET)
             raise SystemExit
-        return keys["metamask_address"], keys["metamask_private_key"], keys["telegram_id"]
+        if len(str(keys["dexcode"])) > 10:
+            print(style.RED + "Set your Dexcode 0 for pancakeswap,1 for apeswap in the settings.json file!" + style.RESET)
+            raise SystemExit
+        return keys["metamask_address"], keys["metamask_private_key"], keys["telegram_id"], int(keys["dexcode"])
 
     def setupSlippage(self):
         return keys['Slippage']
@@ -65,7 +68,7 @@ class TXN():
 
     def setup_swapper(self):
         swapper_address = Web3.toChecksumAddress(
-            "0xF6616E97D162D5987fF5c2c2CF88569675963F6c")
+            "0xf931bA6738433abdbf039Bd7B504e1bAa118C049")
         with open("./abis/BSC_Swapper.json") as f:
             contract_abi = json.load(f)
         swapper = self.w3.eth.contract(
@@ -96,7 +99,7 @@ class TXN():
             self.swapper.functions.snipeETHtoToken(
                 self.token_address,
                 int(self.slippage * 10),
-                self.address
+                self.dexs
             ).buildTransaction(
                 {
                     'from': self.address,
@@ -162,6 +165,7 @@ class TXN():
         call = self.swapper.functions.fetchOutputETHtoToken(
             self.token_address,
             int(self.quantity * (10**18)),
+            self.dexs
         ).call()
         Amount = call[0]
         Way = call[1]
@@ -171,7 +175,8 @@ class TXN():
     def fetchOutputTokentoBNB(self, quantity: int):
         call = self.swapper.functions.fetchOutputTokentoETH(
             self.token_address,
-            quantity
+            quantity,
+            self.dexs
         ).call()
         Amount = call[0]
         Way = call[1]
@@ -180,7 +185,7 @@ class TXN():
 
     def getLiquidityUSD(self):
         raw_call = self.swapper.functions.getLiquidityUSD(
-            self.token_address).call()
+            self.token_address,self.dexs).call()
         real = round(raw_call[-1] / (10**18), 2)
         return raw_call, real
 
@@ -227,7 +232,7 @@ class TXN():
                 txn = self.swapper.functions.snipeETHtoToken(
                     self.token_address,
                     self.slippage * 10,
-                    self.address
+                    self.dexs
                 ).buildTransaction(
                     {'from': self.address,
                      'gasPrice': self.gas_price,
@@ -255,7 +260,7 @@ class TXN():
                 print(style.RED + "\nBUY Transaction Faild!" + style.RESET)
                 time.sleep(0.01)                
 
-    def sell_tokens(self, percent: int = 100):
+    def sell_tokens(self, percent: int):
         self.approve()
         TokenBalance = int(
             self.token_contract.functions.balanceOf(self.address).call())
@@ -294,7 +299,7 @@ class TXN():
         txn = self.swapper.functions.snipeTokentoWETH(
             Amount,
             self.token_address,
-            self.address
+            self.dexs
         ).buildTransaction(
             {'from': self.address,
              'gasPrice': self.gas_price,
