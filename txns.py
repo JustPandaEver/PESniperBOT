@@ -268,7 +268,7 @@ class TXN():
             AmountForSell = int((TokenBalance / 100) * percent)
             if percent == 100:
                 AmountForSell = TokenBalance
-                return self.sell_tokens_fast(AmountForSell)
+            return self.sell_tokens_fast(AmountForSell)
         else:
             print(style.RED + "\nYou dont have any tokens to sell!" + style.RESET)
 
